@@ -32,6 +32,8 @@ class Inventory():
             :param table: String name of the table.
             :param dbuser: String user name for the DB. Default 'louisf'
         """
+        self.entries = list()
+        self.parsedLines = 0
         try:
             con = None
             con = psycopg2.connect(database=dbname, user=dbuser)
@@ -45,7 +47,8 @@ class Inventory():
         colnames = [desc[0] for desc in cur.description]
         con.close()
         self.keys = colnames
-        self.entries = dict()
+        self.tester = dict()
+
 
     def parseGeoJson(self, pathToFile):
         """
@@ -55,6 +58,44 @@ class Inventory():
         if (os.path.isfile(pathToFile) != True):
             print("path to file is incorrect.")
             return 0
+
+        def is_json(myjson):
+            try:
+                json_object = json.loads(myjson)
+            except ValueError:
+                return False
+            return True
+
+        def checkelems(d, l):
+            for elem in l:
+                if (elem in d)!=True:
+                    return False
+            return True
+
+        def shrinkdict(d, l):
+            nd = dict()
+            for elem in l:
+                nd[elem] = d[elem]
+            return nd
+
+        f = open(pathToFile, 'r')
+        it = 0
+        for lines in f.readlines():
+            it += 1
+            tline = lines[:-2]
+            if is_json(tline):
+                self.parsedLines += 1
+                js = json.loads(tline)
+                d = dict(
+                    (k.lower() if isinstance(k, str) else k, v.lower() if
+                     isinstance(v, str) else v) for k, v in js['properties'].items()
+                         )
+                ret = checkelems(d, self.keys)
+                if ret != True:
+                    print("Property mismatch in iteration " + str(it))
+                    continue
+                nd = shrinkdict(d, self.keys)
+                self.entries.append(nd)
         return 1
 
 
@@ -75,23 +116,20 @@ def insertIntoDB(dbname, table, entry, dbuser='louisf'):
         print(e)
         return 0
 
-    print("Connected to database " + dbname)
-
     cur = con.cursor()
 
     try:
-        cols = entry.keys()
+        l = list(entry.keys())
+        l2 = ', '.join(l)
+        cols = tuple(l)
+        dispcols = l2
         vals = [entry[x] for x in cols]
         vals_str_list = ["%s"] * len(vals)
         vals_str = ", ".join(vals_str_list)
-        statement = "INSERT INTO {0} VALUES({1}, {2}, '{3}', {4}, {5}, {6})".format(
-            table, entry["RoadInvent"], entry["CRN"], entry["StreetName"],
-            entry["SpeedLimit"], entry["Terrain"], entry["Structural"]
-        )
-        print(statement)
-        # cur.execute(statement)
-        cur.execute("INSERT INTO " + table + "({cols}) VALUES({vals_str})".format(
-            cols = cols, vals_str = vals_str), vals)
+
+        statement = "INSERT INTO " + table + " ({dispcols}) VALUES ({vals_str})".format(
+            dispcols=dispcols, vals_str=vals_str)
+        cur.execute(statement, vals)
         con.commit()
     except psycopg2.DatabaseError as e:
         if con:
