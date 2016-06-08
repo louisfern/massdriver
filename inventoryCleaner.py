@@ -8,6 +8,7 @@ Contents:
 Required packages:
 json
 psycopg2
+os
 
 Acknowledgements: For a list of acknowledgements, see the information at
 INSERT WEBSITE HERE.
@@ -18,6 +19,9 @@ Louis Fernandes, 2016 06 04
 import json
 import psycopg2
 import os.path
+import pandas as pd
+import numpy as np
+
 
 class Inventory():
     """A class to track the properties of the road inventory GeoJSON file
@@ -25,7 +29,7 @@ class Inventory():
     of desired fields during init and then generate a big ol' dictionary to
     write to the database.
     """
-    def __init__(self, dbname, table, dbuser='louisf'):
+    def __init__(self, dbname, table, dbuser='louisf', connectdb = True):
         """
         Iniitalize a new instance of Inventory.
             :param dbname: String name of the database.
@@ -34,21 +38,22 @@ class Inventory():
         """
         self.entries = list()
         self.parsedLines = 0
-        try:
-            con = None
-            con = psycopg2.connect(database=dbname, user=dbuser)
-        except psycopg2.DatabaseError as e:
-            print("I cannot connect to the database " + dbname)
-            print(e)
+        self.keys = list()
+        if connectdb == True:
+            try:
+                con = None
+                con = psycopg2.connect(database=dbname, user=dbuser)
+            except psycopg2.DatabaseError as e:
+                print("I cannot connect to the database " + dbname)
+                print(e)
 
-        print("Connected to database " + dbname)
-        cur = con.cursor()
-        cur.execute("Select * FROM " + table)
-        colnames = [desc[0] for desc in cur.description]
-        con.close()
-        self.keys = colnames
+            print("Connected to database " + dbname)
+            cur = con.cursor()
+            cur.execute("Select * FROM " + table)
+            colnames = [desc[0] for desc in cur.description]
+            con.close()
+            self.keys = colnames
         self.tester = dict()
-
 
     def parseGeoJson(self, pathToFile):
         """
@@ -97,6 +102,46 @@ class Inventory():
                 nd = shrinkdict(d, self.keys)
                 self.entries.append(nd)
         return 1
+
+
+class PDInventory():
+    """
+    This class takes advantage of pandas to read in the GeoJSON and format the
+    table for writing in one shot to the database.
+    """
+
+    def __init__(self, dbname, table, dbuser='louisf'):
+        self.Inventory = Inventory(dbname, table, dbuser, False)
+        self.table = pd.DataFrame()
+        self.d = dict()
+
+    @staticmethod
+    def is_json(myjson):
+        try:
+            json_object = json.loads(myjson)
+        except ValueError:
+            return False
+        return True
+
+    def geojsontodf(self, pathToFile):
+        f = open(pathToFile, 'r')
+        it = 0
+        for lines in f.readlines():
+            tline = lines[:-2]
+            if PDInventory.is_json(tline):
+                js = json.loads(tline)
+                d = dict(
+                    (k.lower().replace(" ","") if isinstance(k, str)
+                    else k, v.lower().replace(" ","") if isinstance(v, str)
+                    else v) for k, v in js['properties'].items()
+                )
+                for index, elem in d.items():
+                    if index not in self.d:
+                        self.d[index]=list()
+                    self.d[index].append(elem)
+                it += 1
+        self.table = pd.DataFrame.from_dict(self.d)
+        self.table['naccidents'] = np.nan
 
 
 def insertIntoDB(dbname, table, entry, dbuser='louisf'):
