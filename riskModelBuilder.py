@@ -25,6 +25,8 @@ from sklearn import preprocessing as skpre
 from sklearn import linear_model
 from sklearn.cross_validation import cross_val_predict
 from sklearn.cross_validation import cross_val_score
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.cross_validation import train_test_split
 
 
 
@@ -97,8 +99,9 @@ class Alldata():
         TO DO:
         Drop an arbitrary set of input columns
         """
-        self.table['acc_risk'] = self.table['naccidents']\
-            / self.table['assignedle'] /self.table['adt']
+        self.table['acc_risk'] = self.table['naccidents'] \
+                /self.table['assignedle']
+            #/ self.table['assignedle'] /self.table['adt']
         if todrop:
             self.table.drop(todrop, axis=1, inplace=True)
         temp = self.table.copy()
@@ -129,6 +132,8 @@ class Model():
     This class uses a previously generated numpy array to regress a data set
     onto a given row.
 
+    See "http://scikit-learn.org/stable/auto_examples/ensemble/plot_ensemble_oob.html"
+
     Properties:
 
     Methods:
@@ -148,4 +153,16 @@ class Model():
         self.predicted = predicted
         self.scores = scores
 
+    @staticmethod
+    def rf_regression(x, y, ne, test_size):
+        rf = RandomForestRegressor(n_estimators=ne, oob_score=True)
 
+        x_train, x_test, y_train, y_test = train_test_split(
+            x, y, test_size=test_size)
+
+        rf.fit(x_train, y_train)
+        rf_pred = rf.predict(x_test)
+
+        score = rf.score(x_test, y_test)
+        oob_score = rf.oob_score_
+        return score, oob_score, rf_pred, y_test
