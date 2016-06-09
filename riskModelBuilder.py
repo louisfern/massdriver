@@ -117,9 +117,9 @@ class Alldata():
                                   np.array(unique_values) < 30)
         x_nocat = enc.fit_transform(x).toarray()
         self.test=x_nocat
-        x_norm_nocat = (x_nocat-np.mean(x_nocat, axis=0)/np.std(x_nocat, axis=0))
+        x_norm_nocat = (x_nocat-np.mean(x_nocat, axis=0))/np.std(x_nocat, axis=0)
         infinites = sum(np.isinf(x_norm_nocat))
-        x_norm_nocat = x_norm_nocat[:,infinites == 0]
+        x_norm_nocat = x_norm_nocat[:, infinites == 0]
         drop_me = ~np.isnan(x_norm_nocat.sum(axis=0))
         self.traindata = x_norm_nocat[:, drop_me]
 
@@ -142,7 +142,7 @@ class Model():
         self.scores = None
 
     def linear_crossval(self, x, y, folds):
-        lr = linear_model.LinearRegression()
+        lr = linear_model.LinearRegression(normalize=True)
         predicted = cross_val_predict(lr, x, y, cv=folds)
         scores = cross_val_score(lr, x, y, cv=folds)
         self.predicted = predicted
