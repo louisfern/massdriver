@@ -62,10 +62,33 @@
         Have a new teenage driver in the family, and want to get them safely home? <br>
           Wondering how your town's roads stack up? Check out the map below!
         </p>
-      </div>
 
 
-    </div><!-- /.container -->
+    <div class = "container">
+
+      <form  action="/massdriver" method="GET">
+        <div class="form-group">
+          <label for="ratio">Top N percent of dangerous segments:</label>
+          <input type="text" id="ratio" name='ratio' placeholder="Between 0 and 100">
+        </div>
+        <div>
+          <button type="submit" class="btn btn-default btn-lg">Plot me!</button>
+        </div>
+
+      </form>
+    </div>
+
+         <div class="matplotlib">
+   <img src="/myplot" class="inline"/>
+ </div>
+
+    <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+    <script src="static/js/bootstrap.min.js"></script>
+
+  </div> <!-- /.container-->
+
+
+
 
 
     <!-- Bootstrap core JavaScript

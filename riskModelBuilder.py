@@ -165,4 +165,26 @@ class Model():
 
         score = rf.score(x_test, y_test)
         oob_score = rf.oob_score_
-        return score, oob_score, rf_pred, y_test
+        return score, oob_score, rf_pred, x_test, y_test
+
+    @staticmethod
+    def rf_regression_hack(x, y, ne, test_size):
+        rf = RandomForestRegressor(n_estimators=ne, oob_score=True)
+
+        x_train, x_test, y_train, y_test = train_test_split(
+            x, y, test_size=test_size)
+
+        x_train = x[0:35000, :]
+        x_test = x[35000:, :]
+
+        y_train = y[0:35000]
+        y_test = y[35000:]
+
+        rf.fit(x_train, y_train)
+        rf_pred = rf.predict(x_test)
+
+        score = rf.score(x_test, y_test)
+        oob_score = rf.oob_score_
+        return score, oob_score, rf_pred, x_test, y_test
+
+

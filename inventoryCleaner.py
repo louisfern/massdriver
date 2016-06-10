@@ -113,6 +113,7 @@ class PDInventory():
     def __init__(self, dbname, table, dbuser='louisf'):
         self.Inventory = Inventory(dbname, table, dbuser, False)
         self.table = pd.DataFrame()
+        self.geometries = []
         self.d = dict()
 
     @staticmethod
@@ -139,6 +140,7 @@ class PDInventory():
                     if index not in self.d:
                         self.d[index]=list()
                     self.d[index].append(elem)
+                self.geometries.append(js['geometry'])
                 it += 1
         self.table = pd.DataFrame.from_dict(self.d)
         self.table['naccidents'] = np.nan
