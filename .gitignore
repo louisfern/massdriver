@@ -63,3 +63,4 @@ target/
 
 # Raw data
 data/raw/
+notebooks/prediction.csv
