@@ -6,6 +6,8 @@ import psycopg2
 from flask import request
 import sys
 import matplotlib
+matplotlib.use("Agg")
+
 from matplotlib import pyplot as plt
 from flask import send_file
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
@@ -13,10 +15,8 @@ from io import BytesIO
 from shapely.geometry import LineString
 
 
-
 import tempfile
 sys.path.append('/home/louisf/Documents/Insight/massdriver/webapp')
-import numpy as np
 
 user = 'louisf'
 dbname = 'birth_db'
@@ -50,29 +50,30 @@ def massdriver():
 
     def plot_line(ax, ob):
         x, y = ob.xy
-        ax.plot(x, y, color='GRAY', linewidth=3, solid_capstyle='round', zorder=1)
+        ax.plot(x, y, color='GRAY', linewidth=2, zorder=1)
 
     fig = plt.figure(1, figsize=(10, 5), dpi=180)
     ax = fig.add_subplot(111)
-
+    fig.suptitle("Top {} percent of accident-prone roads, predicted".
+                 format(str(percent))
+                 )
     for i in range(0, round(percent / 100 * len(itemlist))):
         line = LineString(itemlist[i][1]['line'])
         plot_line(ax, line)
     canvas = FigureCanvas(fig)
-    img = BytesIO()
-    fig.savefig(img)
-    img.seek(0)
-    return send_file(img, mimetype='image/png')
-"""
     f = tempfile.NamedTemporaryFile(
-        dir='static/temp',
+        dir='/home/louisf/Documents/Insight/massdriver/webapp/static/temp',
         suffix='.png', delete=False
     )
-    hpath = '/home/louisf/Documents/Insight/massdriver/webapp/static/temp/A.png'
-    plt.savefig(hpath, bbox_inches='tight')
     plt.savefig(f, bbox_inches='tight')
     f.close()
     plotPng = f.name.split('/')[-1]
-    plotPng = 'static/temp/A.png'
+
+    """
+        img = BytesIO()
+        fig.savefig(img)
+        img.seek(0)
+        return send_file(img, mimetype='image/png')
+    """
+
     return render_template('massdriver.html', plotPng = plotPng)
-"""
