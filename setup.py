@@ -11,5 +11,5 @@ setup(
     # ],
     author="Louis Fernandes",
     description="This project uses historical traffic data from the state of Massachusetts to provide insight into the safest routes to travel.",
-    requires=['numpy', 'pandas', 'matplotlib','sklearn','psycopg2', 'flask']
+    requires=['numpy', 'pandas', 'matplotlib','sklearn','psycopg2', 'flask', 'sqlalchemy']
 )

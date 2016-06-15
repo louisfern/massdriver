@@ -12,6 +12,10 @@ var isline = 0
 var directionsDisplay
 var directionsService
 var geocoder
+var startLat
+var startLong
+var endLat
+var endLong
 
 function initMap() {
 	directionsDisplay = new google.maps.DirectionsRenderer;
@@ -79,19 +83,27 @@ function getDirections(map){
 	var fromdest = document.getElementById('startPt').value;
 	var todest = document.getElementById('endPt').value;
 	calculateAndDisplayRoute(fromdest, todest, directionsService, directionsDisplay);
-	geocodePoints(fromdest);
-	geocodePoints(todest);
+	var startPoints = geocodePoints(fromdest);
+	var endPoints = geocodePoints(todest);
 }
-
+	
 function geocodePoints(address) {
+	var returnMe = {};
 	geocoder.geocode( { 'address': address}, function(results, status) {
       if (status == google.maps.GeocoderStatus.OK) {
-        alert("Geocoding successful!")
+      	console.log("OK")
+			var lat = results[0].geometry.location.lat();
+			var lng = results[0].geometry.location.lng();
+			//return new Object(lat, lng);		
+			returnMe["lat"] = lat;
+			returnMe["lng"] = lng;	
+			return returnMe;
       } else {
         alert("Geocode was not successful for the following reason: " + status);
+        return {"lat":NaN, "lng":NaN};
       }
    });
-
+	return returnMe;
 }
 
 function traverse(map){

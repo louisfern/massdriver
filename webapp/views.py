@@ -5,8 +5,6 @@ import pickle
 import psycopg2
 from flask import request
 import sys
-import matplotlib
-matplotlib.use("Agg")
 
 from matplotlib import pyplot as plt
 from flask import send_file
