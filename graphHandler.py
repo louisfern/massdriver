@@ -4,12 +4,17 @@ This module was written to interface with my road data shapefile and convert
 it to a graph. It also handles interacting with that graph and providing
 routes and information about those routes.
 
+This class also provides methods for the analysis and querying of a network.
+You should already have a network generated, perhaps from a database?
+How fancy am I?
+
 Louis Fernandes, 2016 06 15
 """
 
-from osgeo import ogr, osr
+from osgeo import ogr
 import networkx as nx
-from matplotlib import pyplot as plt
+import scipy.spatial.distance as distance
+import numpy as np
 
 
 class NetworkGenerator:
@@ -79,27 +84,17 @@ class NetworkGenerator:
         .. [1] http://en.wikipedia.org/wiki/Shapefile
         read_shp, from the NetworkX module
         """
-        try:
-            from osgeo import ogr
-        except ImportError:
-            raise ImportError("read_shp requires OGR: http://www.gdal.org/")
-
-        if not isinstance(path, str):
-            return
 
         net = nx.Graph()
         shp = ogr.Open(path)
         for lyr in shp:
             # fields = [x.GetName() for x in lyr.schema]
-            layerit = 0
             nbad = 0
             ngood = 0
             for f in lyr:
-                layerit += 1
                 flddata = [f.GetField(f.GetFieldIndex(x)) for x in fields]
                 g = f.geometry()
                 if g is None:
-                    print('g is None, layer iteration: {0}'.format(str(layerit)))
                     nbad += 1
                     continue
                 attributes = dict(zip(fields, flddata))
@@ -131,8 +126,51 @@ class NetworkGenerator:
         return net
 
 
-class NetworkAnalyzer:
+def findClosestNode(network, lat, long):
     """
-    This class provides methods for the analysis and querying of a network.
-    You should already have a network generated, perhaps from 
+    This function returns the lat and long of the closest node to an input set
+    of coordinates using cdist from numpy.distance.
+    :param network: A graph.
+    :param lat: Latitude of input.
+    :param long: Longitude of input.
+    :return:
     """
+    a = np.array([[long, lat]])
+    others = np.asarray(network.nodes())
+
+    def closest_point(pt, others):
+        distances = distance.cdist(pt, others)
+        return distances.argmin()
+
+    closest = closest_point(a, others)
+    return others[closest, :]
+
+
+def getShortestPath(network, start, end, weight=None):
+    """
+    This function returns a list of coordinates that define the shortest path.
+    :param network: A graph.
+    :param start: A (long, lat) tuple.
+    :param end: A (long, lat) tuple.
+    :param weight: The field to use as weights on the edges. Default none.
+    :return:
+    """
+    path = nx.shortest_path(network, source=start, target=end, weight=weight)
+    return path
+
+
+def pathingSolution(network, lat1, long1, lat2, long2, weight=None):
+    """"
+    This is the top level script for generating paths.
+    :param network: A graph.
+    :param lat1: Latitude of the starting point.
+    :param long1: Longitude of the starting point.
+    :param lat2: Latitude of the starting point.
+    :param long2: Longitude of the starting point.
+    :param weight: The field to use as weights on the edges. Default none.
+    :return path: A list of (long, lat) tuples.
+    """
+    start = findClosestNode(network, lat1, long1)
+    end = findClosestNode(network, lat2, long2)
+    path = getShortestPath(network, tuple(start), tuple(end), weight=weight)
+    return path

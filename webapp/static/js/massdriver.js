@@ -85,6 +85,18 @@ function getDirections(map){
 	calculateAndDisplayRoute(fromdest, todest, directionsService, directionsDisplay);
 	var startPoints = geocodePoints(fromdest);
 	var endPoints = geocodePoints(todest);
+	datastring = "lat1=startPoints.lat&long1=startPoints.lng&lat2=endPoints.lat&long2:endPoints.lng"
+	$.ajax({
+		type: "POST",
+		url: "/getdirections",
+		data: {lat1:startPoints.lat, long1:startPoints.lng, lat2:endPoints.lat, long2:endPoints.lng, weight:NaN},
+		//dataType: "text",
+		success: validDirections
+	});
+}
+
+function validDirections(response){
+	console.log("Directions succeeded.")
 }
 	
 function geocodePoints(address) {
