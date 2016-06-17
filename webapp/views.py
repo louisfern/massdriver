@@ -3,7 +3,7 @@ from webapp import app
 from sqlalchemy import create_engine
 import pickle
 import psycopg2
-from flask import Response, json, render_template, jsonify
+from flask import make_response, json, render_template, jsonify, request
 import sys
 import graphHandler as gH
 from matplotlib import pyplot as plt
@@ -11,6 +11,7 @@ from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from shapely.geometry import LineString
 import numpy as np
 import json
+from cgi import parse_header
 
 import tempfile
 sys.path.append('/home/louisf/Documents/Insight/massdriver/webapp')
@@ -76,14 +77,41 @@ def massdriver():
     return render_template('massdriver.html', plotPng = plotPng)
 
 
-@app.route('/getdirections', methods=['GET', 'POST'])
-#def getdirections(lat1, long1, lat2, long2, weight=None):
+@app.route('/_add_numbers')
+def add_numbers():
+    a = request.args.get('lat1', 0, type=float)
+    print(a)
+    b = request.args.get('lat2', 0, type=float)
+    c = request.args.get('lng1', 0, type=float)
+    d = request.args.get('lng2', 0, type=float)
+    return jsonify(result=a+b+c+d)
+
+
+@app.route('/getdirections')
 def getdirections():
-    data_json = request.body
+    lat1 = request.args.get('lat1', 0, type=float)
+    lat2 = request.args.get('lat2', 0, type=float)
+    lng1 = request.args.get('lng1', 0, type=float)
+    lng2 = request.args.get('lng2', 0, type=float)
+    print(lat1)
+    print(lat2)
+    print(lng1)
+    print(lng2)
+    weight = request.args.get('weight', None, type=str)
+    if weight == 'NaN':
+        print("weight is nan")
+        weight = None
     graph = gH.NetworkGenerator()
     filepath = '/home/louisf/Documents/Insight/massdriver/data/raw/shapefile/RI_converted.shp'
-    graph.loadGraph(filepath=filepath, fields=['RoadSegmen', 'AssignedLe'], simplify=True)
-    path = gH.pathingSolution(graph.net, lat1, long1, lat2, long2, weight)
+    #graph.loadGraph(filepath=filepath, fields=['RoadSegmen', 'AssignedLe'], simplify=True)
+    with open('/home/louisf/Documents/Insight/massdriver/graph.pickle', 'rb') as f:
+        graph = pickle.load(f)
+    path = gH.pathingSolution(graph.net, lat1, lng1, lat2, lng2, weight)
+    print(path)
     rpath = np.asarray(path)
     rpath = np.reshape(rpath.flatten(), (len(rpath), 2))
-    return rpath
+    print(rpath)
+    #rpath = np.array([[lng1, lat1], [lng2, lat2]])
+    #return jsonify(result=rpath)
+    #return jsonify(result=lat1)
+    return make_response(json.dumps(rpath.tolist()))
