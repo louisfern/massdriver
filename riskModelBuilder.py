@@ -60,7 +60,7 @@ class Alldata():
         self.table = None
         self.traindata = None
         self.test = None
-        self.t2 = None
+        self.all = None
 
     def getData(self):
         """
@@ -103,29 +103,38 @@ class Alldata():
                 /self.table['assignedle']
             #/ self.table['assignedle'] /self.table['adt']
         if todrop:
-            self.table.drop(todrop, axis=1, inplace=True)
+            self.table = self.table.drop(todrop, axis=1)
         temp = self.table.copy()
-        self.t2 = self.table.copy()
         temp2 = temp.loc[~pd.isnull(temp['acc_risk']), 'acc_risk']
         temp3 = temp2.replace([np.inf, -np.inf], np.nan).dropna(how="all")
         nonan = self.table.iloc[temp3.index]
 
+        all = self.table
+        all.acc_risk = 0
+        all3 = all.select_dtypes(include=['int64', 'float64']).as_matrix()
+
         self.test = nonan
 
-        x = nonan.select_dtypes(include=['int64', 'float64'])\
-            .as_matrix()
+        x = nonan.select_dtypes(include=['int64', 'float64']).as_matrix()
 
         unique_values = [len(np.unique(x[:, i])) for i in range(x.shape[1])]
         enc = skpre.OneHotEncoder(categorical_features=
                                   np.array(unique_values) < 30)
         x_nocat = enc.fit_transform(x).toarray()
-        self.test=x_nocat
+
+        unique_all = [len(np.unique(all3[:, i])) for i in range(all3.shape[1])]
+        enc2 = skpre.OneHotEncoder(categorical_features=
+                                  np.array(unique_values) < 30)
+        self.all = enc2.fit_transform(all3).toarray()
+        self.test = x_nocat
         x_norm_nocat = (x_nocat-np.mean(x_nocat, axis=0))/np.std(x_nocat, axis=0)
         infinites = sum(np.isinf(x_norm_nocat))
         x_norm_nocat = x_norm_nocat[:, infinites == 0]
         drop_me = ~np.isnan(x_norm_nocat.sum(axis=0))
         self.traindata = x_norm_nocat[:, drop_me]
 
+        self.all = self.all[:, infinites == 0]
+        self.all = self.all[:, drop_me]
 
 class Model():
     """
@@ -165,7 +174,7 @@ class Model():
 
         score = rf.score(x_test, y_test)
         oob_score = rf.oob_score_
-        return score, oob_score, rf_pred, x_test, y_test
+        return score, oob_score, rf_pred, x_test, y_test, rf
 
     @staticmethod
     def rf_regression_hack(x, y, ne, test_size):
