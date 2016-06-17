@@ -74,7 +74,7 @@ function getDirectionsOld(map){
 		lat2: endPoints.lat,
 		lng1: startPoints.lng,
 		lng2: endPoints.lng,
-		weight: "AssignedLe",
+		weight: "acc_risk", // AssignedLe
 		success: validDirections
 		}, function(data){
 			console.log("%f", data.result);

@@ -1,4 +1,3 @@
-from flask import render_template
 from webapp import app
 from sqlalchemy import create_engine
 import pickle
@@ -11,6 +10,7 @@ from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from shapely.geometry import LineString
 import numpy as np
 import json
+import networkx as nx
 from cgi import parse_header
 
 import tempfile
@@ -102,11 +102,11 @@ def getdirections():
         print("weight is nan")
         weight = None
     graph = gH.NetworkGenerator()
-    filepath = '/home/louisf/Documents/Insight/massdriver/data/raw/shapefile/RI_converted.shp'
-    #graph.loadGraph(filepath=filepath, fields=['RoadSegmen', 'AssignedLe'], simplify=True)
-    with open('/home/louisf/Documents/Insight/massdriver/graph.pickle', 'rb') as f:
-        graph = pickle.load(f)
-    path = gH.pathingSolution(graph.net, lat1, lng1, lat2, lng2, weight)
+    #with open('/home/louisf/Documents/Insight/massdriver/graph.pickle', 'rb') as f:
+    #    graph = pickle.load(f)
+    graph = nx.read_gpickle('/home/louisf/Documents/Insight/massdriver/notebooks/graph_with_risk2.pickle')
+    #path = gH.pathingSolution(graph.net, lat1, lng1, lat2, lng2, weight)
+    path = gH.pathingSolution(graph, lat1, lng1, lat2, lng2, weight)
     print(path)
     rpath = np.asarray(path)
     rpath = np.reshape(rpath.flatten(), (len(rpath), 2))
