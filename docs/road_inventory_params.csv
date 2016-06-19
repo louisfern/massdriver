@@ -30,7 +30,7 @@ iri^int64^FALSE^FALSE^FALSE^FALSE^^^Pavement roughness
 iristatus^int64^TRUE^FALSE^FALSE^FALSE^^1-4^Data collected = 1 else the reason why not
 iriyear^int64^TRUE^FALSE^FALSE^FALSE^^^Year of IRI measurement
 item_id^int64^TRUE^TRUE^FALSE^TRUE^Identifies the sample number^^unknown definition
-jurisdicti^string^TRUE^FALSE^FALSE^FALSE^^0-9, B-J^Who has jurisdiction over the roadway
+jurisdicti^string^TRUE^FALSE^FALSE^FALSE^^0-9,B-J^Who has jurisdiction over the roadway
 leftshou_1^int64^FALSE^TRUE^FALSE^FALSE^^^width of lefthand shoulder
 leftshould^int64^TRUE^FALSE^FALSE^FALSE^^0-4^type of lefthand shoulder
 leftsidewa^int64^FALSE^FALSE^FALSE^FALSE^^^width of lefthand sidewalk
@@ -47,7 +47,7 @@ numberofpe^int64^FALSE^FALSE^FALSE^FALSE^^^number of peak hour lanes
 numberoftr^int64^TRUE^FALSE^FALSE^FALSE^^1-6^Number of travel lanes 
 opposingdi^int64^FALSE^FALSE^FALSE^FALSE^^5-65^Number of travel lanes in the opposite direction of a divided roadway
 oppositenu^int64^TRUE^FALSE^FALSE^FALSE^^1-6^
-psi^int64^FALSE^FALSE^FALSE^FALSE^^unknown^Describes pavement condition
+psi^int64^FALSE^FALSE^FALSE^FALSE^^^Describes pavement condition
 psiyear^int64^TRUE^FALSE^FALSE^FALSE^^^Year of PSI estimation
 rightofway^int64^FALSE^FALSE^FALSE^FALSE^^^right of way width
 rightsho_1^int64^FALSE^FALSE^FALSE^FALSE^^^width of right shoulder
@@ -71,7 +71,7 @@ streetna_1^object^FALSE^FALSE^FALSE^FALSE^^^WILL COMBINE int64O ONE COLUMN WITH 
 streetname^object^FALSE^TRUE^FALSE^FALSE^^^
 streetoper^int64^TRUE^FALSE^FALSE^FALSE^^1-2^1 one way, 2 two way
 structural^int64^TRUE^FALSE^FALSE^FALSE^^1-4^
-subroute^string^TRUE^FALSE^FALSE^TRUE^Optional field, too difficult to clean^???^optional designation
+subroute^string^TRUE^FALSE^FALSE^TRUE^Optional field, too difficult to clean^^optional designation
 surfacetyp^int64^TRUE^FALSE^FALSE^FALSE^^1-9^Type of road surface
 surfacewid^int64^FALSE^FALSE^FALSE^FALSE^^^Measurement of traveled way, minus shoulders
 terrain^int64^TRUE^TRUE^FALSE^FALSE^^1-3^
