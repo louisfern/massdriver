@@ -8,8 +8,8 @@ adtyear^int64^TRUE^FALSE^FALSE^FALSE^^^Year of ADT collection
 assigned_1^int64^TRUE^TRUE^FALSE^FALSE^^0-2^Defines the source of the assigned length value
 assignedle^float64^FALSE^TRUE^FALSE^FALSE^^^Segment length in miles
 city^int64^TRUE^TRUE^FALSE^FALSE^^1-351^city names; link up with other names?
-county^string^TRUE^TRUE^FALSE^FALSE^^A-N^
-crn^string^FALSE^TRUE^TRUE^FALSE^^^An unique identifier combining county code and roadinventory_id
+county^string^TRUE^TRUE^FALSE^FALSE^^a-n^
+crn^string^FALSE^TRUE^TRUE^TRUE^identifier^^An unique identifier combining county code and roadinventory_id
 curbs^int64^TRUE^FALSE^FALSE^FALSE^^0-5^Curb type identifier
 dateactive^string^FALSE^TRUE^FALSE^TRUE^Incomplete data; older roads lumped together^^Date road active or 1/1/2004, whichever sooner. Consider making this a categorical variable; made before 1/1/2004 or not. Maybe “newroad”, where false means made before 1/1/2004
 equation_1^float64^FALSE^FALSE^FALSE^FALSE^^^measured length along the specified EquationRoute where this roadsegment ends
@@ -17,20 +17,20 @@ equationro^float64^FALSE^FALSE^FALSE^FALSE^^^measured length along the specified
 facilityty^int64^TRUE^FALSE^FALSE^FALSE^^1-12^Mainline roadway, roundabout, tunnel, etc.
 federalaid^string^FALSE^FALSE^FALSE^FALSE^^^historical
 federalfun^int64^TRUE^FALSE^FALSE^FALSE^^1-7^federal function classification
-fromcity^int64^TRUE^TRUE^FALSE^FALSE^^1-351^city names; link up with other names?
+fromcity^int64^TRUE^TRUE^FALSE^TRUE^Analysis of in-range values reveals very few in-range values.^1-351^city names; link up with other names?
 fromendtyp^int64^TRUE^TRUE^FALSE^FALSE^^1-6^defines the start of the street the segment lies on
 frommeasur^float64^FALSE^TRUE^FALSE^FALSE^^^The measured length along the RoadSegment feature where the RoadInventory segment begins
-fromstate^int64^TRUE^FALSE^FALSE^FALSE^^1-5^state where the street starts, when at a state boundary
+fromstate^int64^TRUE^FALSE^FALSE^TRUE^Analysis of in-range values reveals very few in-range values.^1-5^state where the street starts, when at a state boundary
 fromstreet^string^FALSE^FALSE^FALSE^FALSE^^^Cross-street where the street starts, when it does so at a cross-street
 functional^int64^TRUE^FALSE^FALSE^FALSE^^0-6^use urban/rural designation to int64erpret functional classification
 futurefaci^int64^FALSE^FALSE^FALSE^TRUE^No definition.^0^unknown definition
 hpmscode^int64^TRUE^FALSE^FALSE^FALSE^^0-2^2 is part of the highway performance monitoring system, else not
 hpmssample^object^FALSE^FALSE^FALSE^TRUE^Station identifier^^identifier of the hpms sample
-iri^int64^FALSE^FALSE^FALSE^FALSE^^^Pavement roughness
-iristatus^int64^TRUE^FALSE^FALSE^FALSE^^1-4^Data collected = 1 else the reason why not
-iriyear^int64^TRUE^FALSE^FALSE^FALSE^^^Year of IRI measurement
+iri^int64^FALSE^FALSE^FALSE^TRUE^See iristatus^^Pavement roughness
+iristatus^int64^TRUE^FALSE^FALSE^TRUE^Inspection of number of in-range values revealed that this parameter is in-range 2000 times out of 480000. This leaves me with very little confidence that any of these measurements are at all accurate. Removing IRI from my investigations.^1-4^Data collected = 1 else the reason why not
+iriyear^int64^TRUE^FALSE^FALSE^TRUE^See iristatus^^Year of IRI measurement
 item_id^int64^TRUE^TRUE^FALSE^TRUE^Identifies the sample number^^unknown definition
-jurisdicti^string^TRUE^FALSE^FALSE^FALSE^^0-9,B-J^Who has jurisdiction over the roadway
+jurisdicti^string^TRUE^FALSE^FALSE^FALSE^^0-9,b-j^Who has jurisdiction over the roadway
 leftshou_1^int64^FALSE^TRUE^FALSE^FALSE^^^width of lefthand shoulder
 leftshould^int64^TRUE^FALSE^FALSE^FALSE^^0-4^type of lefthand shoulder
 leftsidewa^int64^FALSE^FALSE^FALSE^FALSE^^^width of lefthand sidewalk
@@ -45,8 +45,8 @@ municipals^int64^TRUE^TRUE^FALSE^FALSE^^1-3^1 city, 2 town, 3 town with city gov
 nhsstatus^int64^TRUE^FALSE^FALSE^FALSE^^0-15^national highway system status
 numberofpe^int64^FALSE^FALSE^FALSE^FALSE^^^number of peak hour lanes
 numberoftr^int64^TRUE^FALSE^FALSE^FALSE^^1-6^Number of travel lanes 
-opposingdi^int64^FALSE^FALSE^FALSE^FALSE^^5-65^Number of travel lanes in the opposite direction of a divided roadway
-oppositenu^int64^TRUE^FALSE^FALSE^FALSE^^1-6^
+opposingdi^int64^FALSE^FALSE^FALSE^TRUE^Analysis of in-range values reveals very few in-range values.^5-65^Number of travel lanes in the opposite direction of a divided roadway
+oppositenu^int64^TRUE^FALSE^FALSE^TRUE^Analysis of in-range values reveals very few in-range values.^1-6^
 psi^int64^FALSE^FALSE^FALSE^FALSE^^^Describes pavement condition
 psiyear^int64^TRUE^FALSE^FALSE^FALSE^^^Year of PSI estimation
 rightofway^int64^FALSE^FALSE^FALSE^FALSE^^^right of way width
@@ -79,7 +79,7 @@ tocity^int64^TRUE^FALSE^FALSE^FALSE^^1-351^city names; link up with other names?
 toendtype^int64^TRUE^FALSE^FALSE^FALSE^^1-6^describes end of street segment lies on
 tollroad^int64^TRUE^FALSE^FALSE^FALSE^^0-2^
 tomeasure^float64^FALSE^TRUE^FALSE^FALSE^^^The measured length along the RoadSegment feature where the RoadInventory segment ends
-tostate^int64^TRUE^FALSE^FALSE^FALSE^^1-5^
+tostate^int64^TRUE^FALSE^FALSE^TRUE^Analysis of in-range values reveals very few in-range values.^1-5^
 tostreetna^string^FALSE^FALSE^FALSE^FALSE^^^the cross-street where the street ends
 trucknetwo^int64^TRUE^FALSE^FALSE^FALSE^^0-1^unknown definition
 truckroute^int64^TRUE^FALSE^FALSE^FALSE^^0-3^Type of trucks allowed
