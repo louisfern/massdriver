@@ -109,6 +109,7 @@ def getdirections():
     path = gH.pathingSolution(graph, lat1, lng1, lat2, lng2, weight)
     print(path)
     rpath = np.asarray(path)
+    print(rpath)
     rpath = np.reshape(rpath.flatten(), (len(rpath), 2))
     print(rpath)
     #rpath = np.array([[lng1, lat1], [lng2, lat2]])
