@@ -6,7 +6,7 @@ from flask import make_response, json, render_template, jsonify, request
 import sys
 import graphHandler as gH
 from matplotlib import pyplot as plt
-from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
+#from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from shapely.geometry import LineString
 import numpy as np
 import json
@@ -14,8 +14,12 @@ import networkx as nx
 from cgi import parse_header
 
 import tempfile
-sys.path.append('/home/louisf/Documents/Insight/massdriver/webapp')
+sys.path.append('/home/ubuntu/massdriver/webapp')
 
+
+graph = nx.read_gpickle('/home/ubuntu/massdriver/data/graph_with_risk2.pickle')
+
+"""
 user = 'louisf'
 dbname = 'birth_db'
 host = 'localhost'
@@ -23,7 +27,7 @@ db = create_engine('postgres://%s%s/%s'%(user,host,dbname))
 #db = create_engine('postgresql://%s:%s@localhost/%s'%(user,password,dbname))
 con = None
 con = psycopg2.connect(database = dbname, user = user)
-
+"""
 
 @app.route('/index')
 def index():
@@ -39,7 +43,7 @@ def algorithm():
 def about():
     return render_template("about.html")
 
-
+"""
 @app.route('/massdriver')
 def massdriver():
     hackdb = '/home/louisf/Documents/Insight/massdriver/webapp/static/hackdb.pl'
@@ -67,15 +71,15 @@ def massdriver():
     f.close()
     plotPng = f.name.split('/')[-1]
 
-    """
-        img = BytesIO()
-        fig.savefig(img)
-        img.seek(0)
-        return send_file(img, mimetype='image/png')
-    """
+   
+       # img = BytesIO()
+       # fig.savefig(img)
+       # img.seek(0)
+       # return send_file(img, mimetype='image/png')
+   
 
     return render_template('massdriver.html', plotPng = plotPng)
-
+"""
 
 @app.route('/_add_numbers')
 def add_numbers():
@@ -101,16 +105,14 @@ def getdirections():
     if weight == 'NaN':
         print("weight is nan")
         weight = None
-    graph = gH.NetworkGenerator()
+    #graph = gH.NetworkGenerator()
     #with open('/home/louisf/Documents/Insight/massdriver/graph.pickle', 'rb') as f:
     #    graph = pickle.load(f)
-    graph = nx.read_gpickle('/home/louisf/Documents/Insight/massdriver/notebooks/graph_with_risk2.pickle')
     #path = gH.pathingSolution(graph.net, lat1, lng1, lat2, lng2, weight)
     path = gH.pathingSolution(graph, lat1, lng1, lat2, lng2, weight)
     print(path)
     rpath = np.asarray(path)
     rpath = np.reshape(rpath.flatten(), (len(rpath), 2))
-    print(rpath)
     #rpath = np.array([[lng1, lat1], [lng2, lat2]])
     #return jsonify(result=rpath)
     #return jsonify(result=lat1)

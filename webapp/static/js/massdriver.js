@@ -101,7 +101,7 @@ function makeandplotpath (){
 		lat2: latlngs[1][1],
 		lng1: latlngs[0][0],
 		lng2: latlngs[1][0],
-		weight: "AssignedLe",
+		weight: "acc_risk",
 		success: validDirections
 		}, function(data){ 
 			console.log("Path returned.");
