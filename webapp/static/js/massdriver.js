@@ -63,26 +63,6 @@ function validDirections(response){
 	console.log("Directions succeeded.")
 }
 
-function getDirectionsOld(map){
-	var fromdest = document.getElementById('startPt').value;
-	var todest = document.getElementById('endPt').value;
-	calculateAndDisplayRoute(fromdest, todest, directionsService, directionsDisplay);
-	var startPoints = geocodePoints(fromdest);
-	var endPoints = geocodePoints(todest);
-	$.getJSON("/getdirections",{
-		lat1: startPoints.lat,
-		lat2: endPoints.lat,
-		lng1: startPoints.lng,
-		lng2: endPoints.lng,
-		weight: "acc_risk", // AssignedLe
-		success: validDirections
-		}, function(data){
-			console.log("%f", data.result);
-			latlngs = generateLatLong(data.result);
-			plotPath(map, latlngs)
-			}
-	);
-}
 
 function getDirections(map){
 	var fromdest = document.getElementById('startPt').value;
@@ -93,7 +73,6 @@ function getDirections(map){
 }
 
 
-
 function makeandplotpath (){
 	if (add1==true && add2==true){
 	$.getJSON("/getdirections",{
@@ -101,7 +80,7 @@ function makeandplotpath (){
 		lat2: latlngs[1][1],
 		lng1: latlngs[0][0],
 		lng2: latlngs[1][0],
-		weight: "AssignedLe",
+		weight: "acc_risk",
 		success: validDirections
 		}, function(data){ 
 			console.log("Path returned.");
@@ -145,35 +124,11 @@ function geocodePointsTwo(address) {
 	   }
    );
 }
-	
-function geocodePointsOld(address) {
-	var returnMe = {};
-	geocoder.geocode( {'address': address, componentRestrictions:{
-		country: 'USA'}
-	}, function(results, status) {
-      if (status == google.maps.GeocoderStatus.OK) {
-      	console.log("OK");
-			var lat = results[0].geometry.location.lat();
-			var lng = results[0].geometry.location.lng();
-			//return new Object(lat, lng);		
-			returnMe["lat"] = lat;
-			returnMe["lng"] = lng;	
-			return returnMe;
-      } else {
-      	console.log("Geocoding unsuccessful.");
-        alert("Geocode was not successful for the following reason: " + status);
-        return {"lat":NaN, "lng":NaN};
-      }
-   });
-	return returnMe;
-}
 
 function generateLatLong(arr){
-var paths = [];
-for (i = 0; i < arr.length; i++) {  
-	paths.push({lat:arr[i][1], lng:arr[i][0]})
-	//var path = new google.maps.LatLng(arr[i][0], arr[i][1]);
-	//paths.push(path);
+	var paths = [];
+	for (i = 0; i < arr.length; i++) {  
+		paths.push({lat:arr[i][1], lng:arr[i][0]})
    }
 return paths;
 }
@@ -183,54 +138,15 @@ function plotPath(map, inpath){
 	if (isline==1){
 		flightPath.setMap(null);
 	}
-	
-var pathcoords = [
-    {lat: 42.88, lng: -73.5+Math.random()},
-    {lat: 41.7, lng: -72},
-    {lat: 41.86, lng: -70},
-    {lat: 41.55, lng: -71.3}
-  ];
-  flightPath = new google.maps.Polyline({
-    path: pathcoords,
-    geodesic: true,
-    strokeColor: '#FF0000',
-    strokeOpacity: 1.0,
-    strokeWeight: 2
-  });		
-	
 	flightPath = new google.maps.Polyline({
 		path: inpath,
 		geodesic: true,
 		strokeColor: '#FF0000',
-		strokeOpacity: 1.0,
-		strokeWeight: 2}
+		strokeOpacity: 0.9,
+		strokeWeight: 4}
 	);
 	
 	flightPath.setMap(map);
 	isline = 1;
 
 }
-
-function traverse(map){
-// This function takes in locations and returns geojson path
-	if (isline==1){
-		flightPath.setMap(null)
-		}
-  var pathcoords = [
-    {lat: 42.88, lng: -73.5+Math.random()},
-    {lat: 41.7, lng: -72},
-    {lat: 41.86, lng: -70},
-    {lat: 41.55, lng: -71.3}
-  ];
-  flightPath = new google.maps.Polyline({
-    path: pathcoords,
-    geodesic: true,
-    strokeColor: '#FF0000',
-    strokeOpacity: 1.0,
-    strokeWeight: 2
-  });
-	
-  flightPath.setMap(map);
-	isline=1
-
-};
