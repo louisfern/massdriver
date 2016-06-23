@@ -32,9 +32,6 @@ function initMap() {
 	map.fitBounds(bounds);
 	
 	directionsDisplay.setMap(map);
-
-	// calculateAndDisplayRoute('Springfield, MA', 'Boston, MA', directionsService, directionsDisplay);
-
 }
 
 function calculateAndDisplayRoute(orig, dest, directionsService, directionsDisplay) {
@@ -45,11 +42,22 @@ function calculateAndDisplayRoute(orig, dest, directionsService, directionsDispl
   }, function(response, status) {
     if (status == google.maps.DirectionsStatus.OK) {
       directionsDisplay.setDirections(response);
+      calcTotalTime(response, 0);
     } else {
       window.alert('Directions request failed due to ' + status);
     }
   });
 }
+
+function calcTotalTime(response, routenumber){
+	var totaltime = 0
+	route = response.routes[routenumber];
+	for (var i = 0; i < route.legs.length; i++) {
+		totaltime += route.legs[i].duration.text;
+	}
+
+}
+
 
 function ShowLoading(showLoading) {
     if (showLoading) {

@@ -9,11 +9,9 @@
 	<meta name="author" content="louisf" >
 	<link rel="icon" href="../../favicon.ico">
 
-	<title>Mass Driver - Accident avoidance for the conscientious driver</title>
+	<title>Fender bender finder: get there in one piece</title>
 	<!-- Bootstrap core CSS -->
 	<link href="static/css/bootstrap.min.css" rel="stylesheet">
-	<!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-	<link href="../../assets/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
 	<!-- Custom styles for this template -->
 	<link href="starter-template.css" rel="stylesheet">
 	<!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
@@ -39,9 +37,18 @@
 		  margin:0px auto; 
 		  display:inline-block
       }
+      
+      #right-panel {
+        margin: 20px;
+        border-width: 2px;
+        width: 20%;
+        float: left;
+        text-align: left;
+        padding-top: 20px;
+      }
     </style>
 
-</head>
+</head>	
 
 <body onload='initMap()'>
 
@@ -55,7 +62,7 @@
 				<span class="icon-bar"></span>
 				<span class="icon-bar"></span>
 			</button>
-			<a class="navbar-brand" href="#">Mass Driver</a>
+			<a class="navbar-brand" href="#">FBF</a>
 		</div>
 		<div id="navbar" class="collapse navbar-collapse">
 			<ul class="nav navbar-nav">
@@ -72,7 +79,7 @@
 	<div class="container">
 
 		<div class="starter-template">
-		<h1>What are the safest roads in Massachusetts?</h1>
+		<h1>Get me there safely!</h1>
 
 			<div id='menu' class="menu">
 				Begin at:&nbsp;&nbsp;&nbsp;<input type='searchBox' id = 'startPt' value = 'Springfield, MA'><br>
@@ -90,13 +97,40 @@
 
 
 	<div id="map"></div>
-    <script>
-
-    </script>
-
-	<script>
+	<div id="right-panel">
+	<div>
+    <b>Start:</b>
+    <select id="start">
+      <option value="Halifax, NS">Halifax, NS</option>
+      <option value="Boston, MA">Boston, MA</option>
+      <option value="New York, NY">New York, NY</option>
+      <option value="Miami, FL">Miami, FL</option>
+    </select>
+    <br>
+    <b>Waypoints:</b> <br>
+    <i>(Ctrl-Click for multiple selection)</i> <br>
+    <select multiple id="waypoints">
+      <option value="montreal, quebec">Montreal, QBC</option>
+      <option value="toronto, ont">Toronto, ONT</option>
+      <option value="chicago, il">Chicago</option>
+      <option value="winnipeg, mb">Winnipeg</option>
+      <option value="fargo, nd">Fargo</option>
+      <option value="calgary, ab">Calgary</option>
+      <option value="spokane, wa">Spokane</option>
+    </select>
+    <br>
+    <b>End:</b>
+    <select id="end">
+      <option value="Vancouver, BC">Vancouver, BC</option>
+      <option value="Seattle, WA">Seattle, WA</option>
+      <option value="San Francisco, CA">San Francisco, CA</option>
+      <option value="Los Angeles, CA">Los Angeles, CA</option>
+    </select>
+    <br>
+      <input type="submit" id="submit">
+    </div>
 	
-	</script>
+	</div>
 
 	<<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAZr8Ev_q9NNK8F7lPVv7C3DMc42k-7cWA&callback=initMap" 
 	type="text/javascript"></script>
@@ -108,9 +142,7 @@
 	<!-- Placed at the end of the document so the pages load faster -->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 	<script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>
-	<script src="../../dist/js/bootstrap.min.js"></script>
 	<!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-	<script src="../../assets/js/ie10-viewport-bug-workaround.js"></script>
 	<script src="static/js/bootstrap.min.js"></script>
 
 </body>
