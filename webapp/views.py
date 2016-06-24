@@ -24,6 +24,10 @@ db = create_engine('postgres://%s%s/%s'%(user,host,dbname))
 con = None
 con = psycopg2.connect(database = dbname, user = user)
 
+# Doing a memory and speed optimization hack.
+graph = nx.read_gpickle('/home/louisf/Documents/Insight/massdriver/notebooks/graph_with_risk.pickle')
+print('Graph loaded successfully')
+
 @app.route('/')
 def root():
     return render_template('massdriver.html')
@@ -67,8 +71,7 @@ def getdirections():
     if weight == 'NaN':
         print("weight is nan")
         weight = None
-    graph = gH.NetworkGenerator()
-    graph = nx.read_gpickle('/home/louisf/Documents/Insight/massdriver/notebooks/graph_with_risk.pickle')
+    #graph = gH.NetworkGenerator()
     path = gH.pathingSolution(graph, lat1, lng1, lat2, lng2, weight)
     print(path)
     rpath = np.asarray(path)

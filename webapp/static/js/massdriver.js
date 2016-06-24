@@ -12,10 +12,6 @@ var isline = 0
 var directionsDisplay
 var directionsService
 var geocoder
-var startLat
-var startLong
-var endLat
-var endLong
 var add = [false, false]
 var fromdest
 var todest
@@ -68,7 +64,6 @@ function directionsWithWaypoints(orig, dest, directionsService, directionsDispla
 		}, 
 		function(response, status) {
 			if (status == google.maps.DirectionsStatus.OK) {
-				directionsDisplay.setDirections(response);
       		totaltime = calcTotalTime(response, 0);
 				var fieldNameElement = document.getElementById("myTime");
 				fieldNameElement.textContent = "Lowest accident rate time: " + totaltime;
@@ -99,9 +94,10 @@ function convertToWaypoints(points){
 			stopover: false
 		});
 	}
-	skip = Math.floor(newpoints.length/8);
-	for (var i=1; i<newpoints.length; i+=skip){
-		shortpoints.push(newpoints[i-1]);
+	maxpoints = 8;
+	skip = Math.floor(newpoints.length/maxpoints);
+	for (var i=0; i<maxpoints; i+=1){
+		shortpoints.push(newpoints[i*skip]);
 	}	
 	
 	return shortpoints;
@@ -133,6 +129,8 @@ function getDirections(map){
 
 function makeandplotpath (){
 	if (add[0]==true && add[1]==true){
+		add[0]=false; 
+		add[1]=false;
 	$.getJSON("/getdirections",{
 		lat1: latlngs[0][1],
 		lat2: latlngs[1][1],

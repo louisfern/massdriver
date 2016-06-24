@@ -174,7 +174,7 @@ class Model():
 
         score = rf.score(x_test, y_test)
         oob_score = rf.oob_score_
-        return score, oob_score, rf_pred, x_test, y_test
+        return score, oob_score, rf_pred, x_test, y_test, rf
 
     @staticmethod
     def rf_regression_hack(x, y, ne, test_size):
@@ -194,7 +194,7 @@ class Model():
 
         score = rf.score(x_test, y_test)
         oob_score = rf.oob_score_
-        return score, oob_score, rf_pred, x_test, y_test
+        return score, oob_score, rf_pred, x_test, y_test, rf
 
     @staticmethod
     def rf_regression_crossval(X, y, ne, folds):
