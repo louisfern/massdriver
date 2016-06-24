@@ -68,7 +68,7 @@ def getdirections():
         print("weight is nan")
         weight = None
     graph = gH.NetworkGenerator()
-    graph = nx.read_gpickle('/home/louisf/Documents/Insight/massdriver/notebooks/graph_with_risk2.pickle')
+    graph = nx.read_gpickle('/home/louisf/Documents/Insight/massdriver/notebooks/graph_with_risk.pickle')
     path = gH.pathingSolution(graph, lat1, lng1, lat2, lng2, weight)
     print(path)
     rpath = np.asarray(path)
