@@ -1,7 +1,5 @@
 from webapp import app
-from sqlalchemy import create_engine
 import pickle
-import psycopg2
 from flask import make_response, json, render_template, jsonify, request
 import sys
 import graphHandler as gH
@@ -14,7 +12,7 @@ import networkx as nx
 from cgi import parse_header
 
 import tempfile
-sys.path.append('/home/louisf/Documents/Insight/massdriver/webapp')
+sys.path.append('/home/ubuntu/massdriver/webapp')
 
 user = 'louisf'
 dbname = 'birth_db'
@@ -25,7 +23,7 @@ con = None
 con = psycopg2.connect(database = dbname, user = user)
 
 # Doing a memory and speed optimization hack.
-graph = nx.read_gpickle('/home/louisf/Documents/Insight/massdriver/notebooks/graph_with_risk.pickle')
+graph = nx.read_gpickle('/home/massdriver/data/graph_with_risk2.pickle')
 print('Graph loaded successfully')
 
 @app.route('/')
