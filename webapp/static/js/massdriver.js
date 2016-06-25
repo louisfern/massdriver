@@ -142,7 +142,7 @@ function makeandplotpath (){
 			console.log("Path returned.");
 			latlngs = generateLatLong(data);
 			plotPath(map, latlngs);
-			directionsWithWaypoints(fromdest, todest, directionsService, directionsDisplay, latlngs);
+			//directionsWithWaypoints(fromdest, todest, directionsService, directionsDisplay, latlngs);
 		}
 	);
 	}

@@ -12,10 +12,13 @@ Louis Fernandes, 2016 06 15
 """
 
 from osgeo import ogr
+import more_itertools as mtool
 import networkx as nx
 import scipy.spatial.distance as distance
+import scipy.spatial as spatial
 import numpy as np
-import psutil
+import time
+
 
 class NetworkGenerator:
     """
@@ -126,6 +129,32 @@ class NetworkGenerator:
         return net
 
 
+def generateKDTree(network):
+    """
+    This function takes in a network and computes the corresponding K-D Tree
+    for it, using the cKDTree function from scipy. This lets me do blazingly
+    fast nearest point searches, > 1000X faster than my naive implementation.
+    :param network: A networkx graph.
+    :return: tree: A K-D Tree of the networkx graph.
+    """
+    tree = spatial.cKDTree(np.asarray(network.nodes()))
+    return tree
+
+
+def findClosestNodeTree(tree, points):
+    """
+    This function uses a K-D Tree to find the closest points to the input
+    points array. This is much MUCH faster than my least distance computation.
+    :param tree: A K-D Tree generated with generateKDTree
+    :param points: A list of lng, lat tuples
+    :return: closestNodes: A numpy array of lng, lat that corresponds to the
+    shortest path.
+    """
+    dist, indices = tree.query(points)
+    closestNodes = points[indices]
+    return closestNodes
+
+
 def findClosestNode(network, lat, long):
     """
     This function returns the lat and long of the closest node to an input set
@@ -133,7 +162,7 @@ def findClosestNode(network, lat, long):
     :param network: A graph.
     :param lat: Latitude of input.
     :param long: Longitude of input.
-    :return:
+    :return: [long, lat] of closest point
     """
     a = np.array([[long, lat]])
     others = np.asarray(network.nodes())
@@ -175,3 +204,95 @@ def pathingSolution(network, lat1, long1, lat2, long2, weight=None):
     path = getShortestPath(network, tuple(start), tuple(end), weight=weight)
 
     return path
+
+
+def pathWeight(network, path, method="sum", weight='assignedle'):
+    """
+    This function returns risk along the edges defined by the nodes in path
+    according to the methods outlined in method using weights. THIS FUNCTION
+    ASSUMES A FRIENDLY ACTOR. PLEASE DON'T ABUSE IT. I AM DELIBERATELY SKIPPING
+    INPUT VALIDATION HERE.
+    :param network: A networkx graph object.
+    :param path: A dict of nodes to traverse.
+    :param method: A string desribing the accumulation method. The only valid
+    input right now is "sum", but you could imagine placing "multiplicative" or
+    some other method here. "sum" is default.
+    :param weight: The weight to use when accumulating the edges. Defaults to
+    'assignedle'. Valid options are any parameter that exists on all edges of
+    the graph. If None, weight is set to "assignedle"
+    :return: totalweight: The total weight from the edges.
+    """
+
+    if weight is None:
+        weight = "assignedle"
+
+    totalweight = 0
+    if method == 'sum':
+        it = 0
+        for node in path:
+            it += 1
+            if it < len(path):
+                totalweight += network[node][path[it]][weight]
+
+    return totalweight
+
+
+def getdirections(graph, lat1, lng1, lat2, lng2, weight=None):
+    """
+    This is a high-level function for doing pathing on a graph.
+    :param graph: A networkx graph object, whose nodes are lat, long
+    :param lat1: Latitude of start.
+    :param lng1: Longitude of start.
+    :param lat2: Latitude of destination.
+    :param lng2: Longitude of destination.
+    :param weight: Weight to use for pathing. Valid values are properties of
+    the graph edges. Some defaults are set to "assignedle"
+    :return: rpath, a list of tuples of long, lat coordinates.
+    """
+    if weight == 'NaN':
+        print("weight is nan")
+        weight = None
+    path = pathingSolution(graph, lat1, lng1, lat2, lng2, weight)
+    rpath = np.asarray(path)
+    rpath = np.reshape(rpath.flatten(), (len(rpath), 2))
+    print(rpath)
+    return rpath.tolist()
+
+
+def getWeight(graph, path, onGraph, method='sum', weight='assignedle'):
+    """ This function returns the total weight of the route, using the
+    accumulation method and weight specified.
+    :param graph:
+    :param path:
+    :param onGraph:
+    :param method='sum':
+    :param weight='assignedle':
+    """
+
+    if onGraph:
+        return pathWeight(graph, path, method, weight)
+    else:
+        modpath = pathAlign(graph, path)
+        return pathWeight(graph, path, method, weight)
+
+
+def pathAlign(graph, path):
+    """
+    This function takes in a list of (long, lat) tuples and returns an
+    approximated path formed by matching the closest coordinates in the
+    provided graph.
+    :param graph: A networkx graph object.
+    :param path: A list of long, lat tuples to re-align.
+    :return: newPath: A list of re-computed long, lat tuples.
+    """
+    print('starting the path alignment')
+    ti = time.time()
+
+    tree = generateKDTree(graph)
+    dist, indices = tree.query(path)
+    t = np.asarray(graph.nodes())
+    newPath = t[indices]
+    t2 = time.time()-ti
+    print("ending path alignment, {}".format(t2))
+
+    return newPath

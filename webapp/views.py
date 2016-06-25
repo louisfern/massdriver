@@ -1,7 +1,5 @@
 from webapp import app
-from sqlalchemy import create_engine
 import pickle
-import psycopg2
 from flask import make_response, json, render_template, jsonify, request
 import sys
 import graphHandler as gH
@@ -16,17 +14,13 @@ from cgi import parse_header
 import tempfile
 sys.path.append('/home/louisf/Documents/Insight/massdriver/webapp')
 
-user = 'louisf'
-dbname = 'birth_db'
-host = 'localhost'
-db = create_engine('postgres://%s%s/%s'%(user,host,dbname))
-#db = create_engine('postgresql://%s:%s@localhost/%s'%(user,password,dbname))
-con = None
-con = psycopg2.connect(database = dbname, user = user)
 
 # Doing a memory and speed optimization hack.
-graph = nx.read_gpickle('/home/louisf/Documents/Insight/massdriver/notebooks/graph_with_risk.pickle')
+#graph = nx.read_gpickle('/home/louisf/Documents/Insight/massdriver/notebooks/graph_with_risk.pickle')
+graph = nx.read_gpickle('/home/louisf/Documents/Insight/massdriver/data/filled_reduced_needs_risk.pickle')
+
 print('Graph loaded successfully')
+
 
 @app.route('/')
 def root():
@@ -73,9 +67,7 @@ def getdirections():
         weight = None
     #graph = gH.NetworkGenerator()
     path = gH.pathingSolution(graph, lat1, lng1, lat2, lng2, weight)
-    print(path)
     rpath = np.asarray(path)
-    print(rpath)
     rpath = np.reshape(rpath.flatten(), (len(rpath), 2))
     print(rpath)
     return make_response(json.dumps(rpath.tolist()))
