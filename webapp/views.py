@@ -4,7 +4,6 @@ from flask import make_response, json, render_template, jsonify, request
 import sys
 import graphHandler as gH
 from matplotlib import pyplot as plt
-from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from shapely.geometry import LineString
 import numpy as np
 import json
@@ -14,16 +13,8 @@ from cgi import parse_header
 import tempfile
 sys.path.append('/home/ubuntu/massdriver/webapp')
 
-user = 'louisf'
-dbname = 'birth_db'
-host = 'localhost'
-db = create_engine('postgres://%s%s/%s'%(user,host,dbname))
-#db = create_engine('postgresql://%s:%s@localhost/%s'%(user,password,dbname))
-con = None
-con = psycopg2.connect(database = dbname, user = user)
-
 # Doing a memory and speed optimization hack.
-graph = nx.read_gpickle('/home/massdriver/data/graph_with_risk2.pickle')
+graph = nx.read_gpickle('/home/ubuntu/filled_reduced_needs_risk.pickle')
 print('Graph loaded successfully')
 
 @app.route('/')
