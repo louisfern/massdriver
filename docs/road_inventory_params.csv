@@ -1,0 +1,89 @@
+Variable^Data type^Categorical^Required^Identifier^Disqualify^DQ reason^Reasonable range^Description
+accesscont^int64^TRUE^FALSE^FALSE^FALSE^^0-2^Determines what type of traffic allowed on a road
+addedroadt^int64^TRUE^FALSE^FALSE^FALSE^^0-11^Description of roads added to the GIS that are 250 feet or more and serve a specific land use
+adt^int64^FALSE^FALSE^FALSE^FALSE^^^Average annual daily traffic
+adtderivat^int64^TRUE^FALSE^FALSE^FALSE^^0-5^How ADT is derived
+adtstation^int64^TRUE^FALSE^TRUE^TRUE^Station identifier^^ADT count station location number
+adtyear^int64^TRUE^FALSE^FALSE^FALSE^^^Year of ADT collection
+assigned_1^int64^TRUE^TRUE^FALSE^FALSE^^0-2^Defines the source of the assigned length value
+assignedle^float64^FALSE^TRUE^FALSE^FALSE^^^Segment length in miles
+city^int64^TRUE^TRUE^FALSE^FALSE^^1-351^city names; link up with other names?
+county^string^TRUE^TRUE^FALSE^FALSE^^A-N^
+crn^string^FALSE^TRUE^TRUE^TRUE^identifier^^An unique identifier combining county code and roadinventory_id
+curbs^int64^TRUE^FALSE^FALSE^FALSE^^0-5^Curb type identifier
+dateactive^string^FALSE^TRUE^FALSE^TRUE^Incomplete data; older roads lumped together^^Date road active or 1/1/2004, whichever sooner. Consider making this a categorical variable; made before 1/1/2004 or not. Maybe “newroad”, where false means made before 1/1/2004
+equation_1^float64^FALSE^FALSE^FALSE^FALSE^^^measured length along the specified EquationRoute where this roadsegment ends
+equationro^float64^FALSE^FALSE^FALSE^FALSE^^^measured length along the specified EquationRoute where this roadsegment starts
+facilityty^int64^TRUE^FALSE^FALSE^FALSE^^1-12^Mainline roadway, roundabout, tunnel, etc.
+federalaid^string^FALSE^FALSE^FALSE^TRUE^^^historical
+federalfun^int64^TRUE^FALSE^FALSE^FALSE^^1-7^federal function classification
+fromcity^int64^TRUE^TRUE^FALSE^TRUE^Analysis of in-range values reveals very few in-range values.^1-351^city names; link up with other names?
+fromendtyp^int64^TRUE^TRUE^FALSE^FALSE^^1-6^defines the start of the street the segment lies on
+frommeasur^float64^FALSE^TRUE^FALSE^FALSE^^^The measured length along the RoadSegment feature where the RoadInventory segment begins
+fromstate^int64^TRUE^FALSE^FALSE^TRUE^Analysis of in-range values reveals very few in-range values.^1-5^state where the street starts, when at a state boundary
+fromstreet^string^FALSE^FALSE^FALSE^TRUE^^^Cross-street where the street starts, when it does so at a cross-street
+functional^int64^TRUE^FALSE^FALSE^FALSE^^0-6^use urban/rural designation to int64erpret functional classification
+futurefaci^int64^FALSE^FALSE^FALSE^TRUE^No definition.^0^unknown definition
+hpmscode^int64^TRUE^FALSE^FALSE^FALSE^^0-2^2 is part of the highway performance monitoring system, else not
+hpmssample^object^FALSE^FALSE^FALSE^TRUE^Station identifier^^identifier of the hpms sample
+iri^int64^FALSE^FALSE^FALSE^TRUE^See iristatus^^Pavement roughness
+iristatus^int64^TRUE^FALSE^FALSE^TRUE^Inspection of number of in-range values revealed that this parameter is in-range 2000 times out of 480000. This leaves me with very little confidence that any of these measurements are at all accurate. Removing IRI from my investigations.^1-4^Data collected = 1 else the reason why not
+iriyear^int64^TRUE^FALSE^FALSE^TRUE^See iristatus^^Year of IRI measurement
+item_id^int64^TRUE^TRUE^FALSE^TRUE^Identifies the sample number^^unknown definition
+jurisdicti^string^TRUE^FALSE^FALSE^TRUE^Analysis of in-range values reveals very few in-range values.^0-9,B-J^Who has jurisdiction over the roadway
+leftshou_1^int64^FALSE^TRUE^FALSE^FALSE^^^width of lefthand shoulder
+leftshould^int64^TRUE^FALSE^FALSE^FALSE^^0-4^type of lefthand shoulder
+leftsidewa^int64^FALSE^FALSE^FALSE^FALSE^^^width of lefthand sidewalk
+lifecycles^int64^TRUE^TRUE^FALSE^FALSE^^1-9^Describes status of road; parking lot, roadway, ferry, etc.
+massdothig^int64^TRUE^TRUE^FALSE^FALSE^^1-6^MassDOT district
+mediantype^int64^TRUE^FALSE^FALSE^FALSE^^0-6^type of median on divided roads
+medianwidt^int64^FALSE^FALSE^FALSE^FALSE^^^width of the medain in feet
+mhs^int64^TRUE^FALSE^FALSE^FALSE^^0-1^1 on metropolitan highway system, 0 not
+mileagecou^int64^TRUE^TRUE^FALSE^FALSE^^0-1^mileage counted towards road centerline mileage
+mpo^string^TRUE^TRUE^FALSE^FALSE^^^Metropolitan Planning Org; translate to categorical? TRANSLATE ME
+municipals^int64^TRUE^TRUE^FALSE^FALSE^^1-3^1 city, 2 town, 3 town with city government
+nhsstatus^int64^TRUE^FALSE^FALSE^FALSE^^0-15^national highway system status
+numberofpe^int64^FALSE^FALSE^FALSE^FALSE^^^number of peak hour lanes
+numberoftr^int64^TRUE^FALSE^FALSE^FALSE^^1-6^Number of travel lanes 
+opposingdi^int64^FALSE^FALSE^FALSE^TRUE^Analysis of in-range values reveals very few in-range values.^5-65^Number of travel lanes in the opposite direction of a divided roadway
+oppositenu^int64^TRUE^FALSE^FALSE^TRUE^Analysis of in-range values reveals very few in-range values.^1-6^
+psi^int64^FALSE^FALSE^FALSE^FALSE^^^Describes pavement condition
+psiyear^int64^TRUE^FALSE^FALSE^FALSE^^^Year of PSI estimation
+rightofway^int64^FALSE^FALSE^FALSE^FALSE^^^right of way width
+rightsho_1^int64^FALSE^FALSE^FALSE^FALSE^^^width of right shoulder
+rightshoul^int64^TRUE^FALSE^FALSE^FALSE^^0-4^type of right shoulder
+rightsidew^int64^FALSE^FALSE^FALSE^FALSE^^^width of right sidewalk
+roadinvent^int64^FALSE^TRUE^FALSE^TRUE^Identifier^^unique identifier of the road inventory file
+roadsegmen^int64^FALSE^TRUE^FALSE^FALSE^Identifier^^unique identifier of the base arcs; keep this in, as we need it to attach the accidents
+routedirec^string^TRUE^FALSE^FALSE^TRUE^Only one value (true)^^Direction TRANSLATE ME
+routefrom^float^FALSE^FALSE^FALSE^FALSE^^^measured length along Route where this roadinventory segment ends
+routekey^string^FALSE^FALSE^FALSE^TRUE^157K unique values^^primary state numbered route on which this segment lies. This could be handy!
+routenumbe^string^FALSE^FALSE^FALSE^TRUE^100K unique values; don't have time to do NLP to get route name^^route number designation
+routequali^int64^TRUE^FALSE^FALSE^TRUE^Not implemented, all zeros^0-9^Not implemented at this time (supposedly)
+routesyste^string^TRUE^TRUE^FALSE^FALSE^^^route system, can be categorical
+routeto^float^FALSE^FALSE^FALSE^FALSE^^^measured length along Route where this roadinventory segment starts
+routetype^int64^TRUE^FALSE^FALSE^FALSE^^0-2^Non-numbered, numbered and how
+rpa^string^TRUE^TRUE^FALSE^FALSE^^^Regional Planning Agency, can be categorical. TRANSLATE ME
+shape_len^float64^FALSE^FALSE^FALSE^FALSE^^^unknown definition
+speedlimit^int64^FALSE^FALSE^FALSE^FALSE^^5-65^
+streetlist^int64^FALSE^TRUE^FALSE^FALSE^^^identifier of the street segment is on
+streetna_1^object^FALSE^FALSE^FALSE^TRUE^^^WILL COMBINE int64O ONE COLUMN WITH STREET NAME
+streetname^object^FALSE^TRUE^FALSE^TRUE^^^
+streetoper^int64^TRUE^FALSE^FALSE^FALSE^^1-2^1 one way, 2 two way
+structural^int64^TRUE^FALSE^FALSE^FALSE^^1-4^
+subroute^string^TRUE^FALSE^FALSE^TRUE^Optional field, too difficult to clean^^optional designation
+surfacetyp^int64^TRUE^FALSE^FALSE^FALSE^^1-9^Type of road surface
+surfacewid^int64^FALSE^FALSE^FALSE^FALSE^^^Measurement of traveled way, minus shoulders
+terrain^int64^TRUE^TRUE^FALSE^FALSE^^1-3^
+tocity^int64^TRUE^FALSE^FALSE^TRUE^Analysis of in-range values reveals very few in-range values.^1-351^city names; link up with other names?
+toendtype^int64^TRUE^FALSE^FALSE^FALSE^^1-6^describes end of street segment lies on
+tollroad^int64^TRUE^FALSE^FALSE^FALSE^^0-2^
+tomeasure^float64^FALSE^TRUE^FALSE^FALSE^^^The measured length along the RoadSegment feature where the RoadInventory segment ends
+tostate^int64^TRUE^FALSE^FALSE^TRUE^Analysis of in-range values reveals very few in-range values.^1-5^
+tostreetna^string^FALSE^FALSE^FALSE^TRUE^String, too many values to categorizez^^the cross-street where the street ends
+trucknetwo^int64^TRUE^FALSE^FALSE^FALSE^^0-1^unknown definition
+truckroute^int64^TRUE^FALSE^FALSE^FALSE^^0-3^Type of trucks allowed
+undivide_1^int64^FALSE^TRUE^FALSE^FALSE^^^Width of the should on opposite side of road
+undividedl^int64^TRUE^TRUE^FALSE^FALSE^^0-4^type of shoulder on the lefthand side of road while travelling NB/EB
+urbanizeda^int64^TRUE^FALSE^FALSE^FALSE^^^rural or description of urban area 23 different factors that could actually be four. Consider combining. TRANSLATE ME
+urbantype^int64^TRUE^TRUE^FALSE^FALSE^^1-5^Describes the population density

@@ -12,12 +12,9 @@ var isline = 0
 var directionsDisplay
 var directionsService
 var geocoder
-var startLat
-var startLong
-var endLat
-var endLong
-var add1 = false
-var add2 = false
+var add = [false, false]
+var fromdest
+var todest
 
 
 function initMap() {
@@ -27,29 +24,85 @@ function initMap() {
 	var mapDiv = document.getElementById('map');
 	map = new google.maps.Map(mapDiv)
 	var southWest = new google.maps.LatLng(41.65, -73.5);
-	var northEast = new google.maps.LatLng(42.88, -69.95);
+	var northEast = new google.maps.LatLng(42.68, -69.95);
 	var bounds = new google.maps.LatLngBounds(southWest,northEast);
 	map.fitBounds(bounds);
 	
 	directionsDisplay.setMap(map);
-
-	// calculateAndDisplayRoute('Springfield, MA', 'Boston, MA', directionsService, directionsDisplay);
-
 }
 
 function calculateAndDisplayRoute(orig, dest, directionsService, directionsDisplay) {
-  directionsService.route({
-    origin: orig, 
-    destination: dest,
-    travelMode: google.maps.TravelMode.DRIVING
-  }, function(response, status) {
-    if (status == google.maps.DirectionsStatus.OK) {
-      directionsDisplay.setDirections(response);
-    } else {
-      window.alert('Directions request failed due to ' + status);
-    }
-  });
+	var totaltime = 0;	
+	directionsService.route({
+		origin: orig, 
+		destination: dest,
+		travelMode: google.maps.TravelMode.DRIVING
+  		}, 
+  		function(response, status) {
+			if (status == google.maps.DirectionsStatus.OK) {
+				directionsDisplay.setDirections(response);
+				totaltime = calcTotalTime(response, 0);
+				var fieldNameElement = document.getElementById("googleTime");
+				fieldNameElement.textContent = "Google driving time: " + totaltime;
+			} else {
+      		window.alert('Directions request failed due to ' + status);
+			}
+		}
+	);
 }
+
+
+function directionsWithWaypoints(orig, dest, directionsService, directionsDisplay, waypoints){
+	// This function takes in waypoints I create and gets directions with them.
+	var totaltime=0;	
+	waypointsConverted = convertToWaypoints(waypoints);
+	directionsService.route({
+   	origin: orig, 
+   	destination: dest,
+   	travelMode: google.maps.TravelMode.DRIVING,
+		waypoints:waypointsConverted
+		}, 
+		function(response, status) {
+			if (status == google.maps.DirectionsStatus.OK) {
+      		totaltime = calcTotalTime(response, 0);
+				var fieldNameElement = document.getElementById("myTime");
+				fieldNameElement.textContent = "Lowest accident rate time: " + totaltime;
+      	} else {
+      		window.alert('Directions request failed due to ' + status);
+    		}
+  		}
+  	);
+}
+
+
+
+function calcTotalTime(response, routenumber){
+	var totaltime = 0;
+	route = response.routes[routenumber];
+	for (var i = 0; i < route.legs.length; i++) {
+		totaltime += route.legs[i].duration.text;
+	}
+	return totaltime;
+}
+
+function convertToWaypoints(points){
+	var newpoints = [];
+	var shortpoints = [];
+	for (var i=0; i<points.length; i++) {
+		newpoints.push({
+			location: new google.maps.LatLng(points[i].lat, points[i].lng),
+			stopover: false
+		});
+	}
+	maxpoints = 8;
+	skip = Math.floor(newpoints.length/maxpoints);
+	for (var i=0; i<maxpoints; i+=1){
+		shortpoints.push(newpoints[i*skip]);
+	}	
+	
+	return shortpoints;
+}
+
 
 function ShowLoading(showLoading) {
     if (showLoading) {
@@ -63,39 +116,21 @@ function validDirections(response){
 	console.log("Directions succeeded.")
 }
 
-function getDirectionsOld(map){
-	var fromdest = document.getElementById('startPt').value;
-	var todest = document.getElementById('endPt').value;
-	calculateAndDisplayRoute(fromdest, todest, directionsService, directionsDisplay);
-	var startPoints = geocodePoints(fromdest);
-	var endPoints = geocodePoints(todest);
-	$.getJSON("/getdirections",{
-		lat1: startPoints.lat,
-		lat2: endPoints.lat,
-		lng1: startPoints.lng,
-		lng2: endPoints.lng,
-		weight: "acc_risk", // AssignedLe
-		success: validDirections
-		}, function(data){
-			console.log("%f", data.result);
-			latlngs = generateLatLong(data.result);
-			plotPath(map, latlngs)
-			}
-	);
-}
 
 function getDirections(map){
-	var fromdest = document.getElementById('startPt').value;
-	var todest = document.getElementById('endPt').value;
+	fromdest = document.getElementById('startPt').value;
+	todest = document.getElementById('endPt').value;
 	calculateAndDisplayRoute(fromdest, todest, directionsService, directionsDisplay);
-	geocodePointsOne(fromdest);
-	geocodePointsTwo(todest);
+	geocodePoints(fromdest, 0);
+	geocodePoints(todest, 1);
+	
 }
-
 
 
 function makeandplotpath (){
-	if (add1==true && add2==true){
+	if (add[0]==true && add[1]==true){
+		add[0]=false; 
+		add[1]=false;
 	$.getJSON("/getdirections",{
 		lat1: latlngs[0][1],
 		lat2: latlngs[1][1],
@@ -106,74 +141,34 @@ function makeandplotpath (){
 		}, function(data){ 
 			console.log("Path returned.");
 			latlngs = generateLatLong(data);
-			plotPath(map, latlngs)
+			plotPath(map, latlngs);
+			directionsWithWaypoints(fromdest, todest, directionsService, directionsDisplay, latlngs);
 		}
 	);
 	}
 }
 
-function geocodePointsOne(address) {
+function geocodePoints(address, locnum) {
 	var returnMe = {};
 	geocoder.geocode( {'address': address, componentRestrictions:{
 		country: 'USA'}}, function(results, status) {
       	if (status == google.maps.GeocoderStatus.OK) {
       		console.log("OK");
-				latlngs[0][0]=results[0].geometry.location.lng();
-				latlngs[0][1]=results[0].geometry.location.lat();
-				add1 = true;
+				latlngs[locnum][0]=results[0].geometry.location.lng();
+				latlngs[locnum][1]=results[0].geometry.location.lat();
+				add[locnum] = true;
 				makeandplotpath()
       	} else {
       		console.log("Geocoding unsuccessful.");
      		}
 	   }
    );
-}
-
-function geocodePointsTwo(address) {
-	var returnMe = {};
-	geocoder.geocode( {'address': address, componentRestrictions:{
-		country: 'USA'}}, function(results, status) {
-      	if (status == google.maps.GeocoderStatus.OK) {
-      		console.log("OK");
-				latlngs[1][0]=results[0].geometry.location.lng();
-				latlngs[1][1]=results[0].geometry.location.lat();
-				add2 = true;
-				makeandplotpath()
-      	} else {
-      		console.log("Geocoding unsuccessful.");
-     		}
-	   }
-   );
-}
-	
-function geocodePointsOld(address) {
-	var returnMe = {};
-	geocoder.geocode( {'address': address, componentRestrictions:{
-		country: 'USA'}
-	}, function(results, status) {
-      if (status == google.maps.GeocoderStatus.OK) {
-      	console.log("OK");
-			var lat = results[0].geometry.location.lat();
-			var lng = results[0].geometry.location.lng();
-			//return new Object(lat, lng);		
-			returnMe["lat"] = lat;
-			returnMe["lng"] = lng;	
-			return returnMe;
-      } else {
-      	console.log("Geocoding unsuccessful.");
-        alert("Geocode was not successful for the following reason: " + status);
-        return {"lat":NaN, "lng":NaN};
-      }
-   });
-	return returnMe;
 }
 
 function generateLatLong(arr){
-var paths = [];
-for (i = 0; i < arr.length; i++) {  
-	paths.push({lat:arr[i][1], lng:arr[i][0]})
-	//var path = new google.maps.LatLng(arr[i][0], arr[i][1]);
-	//paths.push(path);
+	var paths = [];
+	for (i = 0; i < arr.length; i++) {  
+		paths.push({lat:arr[i][1], lng:arr[i][0]})
    }
 return paths;
 }
@@ -183,27 +178,12 @@ function plotPath(map, inpath){
 	if (isline==1){
 		flightPath.setMap(null);
 	}
-	
-var pathcoords = [
-    {lat: 42.88, lng: -73.5+Math.random()},
-    {lat: 41.7, lng: -72},
-    {lat: 41.86, lng: -70},
-    {lat: 41.55, lng: -71.3}
-  ];
-  flightPath = new google.maps.Polyline({
-    path: pathcoords,
-    geodesic: true,
-    strokeColor: '#FF0000',
-    strokeOpacity: 1.0,
-    strokeWeight: 2
-  });		
-	
 	flightPath = new google.maps.Polyline({
 		path: inpath,
 		geodesic: true,
 		strokeColor: '#FF0000',
-		strokeOpacity: 1.0,
-		strokeWeight: 2}
+		strokeOpacity: 0.9,
+		strokeWeight: 4}
 	);
 	
 	flightPath.setMap(map);
@@ -211,26 +191,3 @@ var pathcoords = [
 
 }
 
-function traverse(map){
-// This function takes in locations and returns geojson path
-	if (isline==1){
-		flightPath.setMap(null)
-		}
-  var pathcoords = [
-    {lat: 42.88, lng: -73.5+Math.random()},
-    {lat: 41.7, lng: -72},
-    {lat: 41.86, lng: -70},
-    {lat: 41.55, lng: -71.3}
-  ];
-  flightPath = new google.maps.Polyline({
-    path: pathcoords,
-    geodesic: true,
-    strokeColor: '#FF0000',
-    strokeOpacity: 1.0,
-    strokeWeight: 2
-  });
-	
-  flightPath.setMap(map);
-	isline=1
-
-};

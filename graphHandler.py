@@ -15,7 +15,7 @@ from osgeo import ogr
 import networkx as nx
 import scipy.spatial.distance as distance
 import numpy as np
-
+import psutil
 
 class NetworkGenerator:
     """
@@ -173,4 +173,5 @@ def pathingSolution(network, lat1, long1, lat2, long2, weight=None):
     start = findClosestNode(network, lat1, long1)
     end = findClosestNode(network, lat2, long2)
     path = getShortestPath(network, tuple(start), tuple(end), weight=weight)
+
     return path
