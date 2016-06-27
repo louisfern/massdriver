@@ -15,9 +15,11 @@ var geocoder
 var add = [false, false]
 var fromdest
 var todest
+var weight
 
 
 function initMap() {
+	// Sets up the map
 	directionsDisplay = new google.maps.DirectionsRenderer;
   	directionsService = new google.maps.DirectionsService;
   	geocoder = new google.maps.Geocoder();
@@ -32,7 +34,9 @@ function initMap() {
 }
 
 function calculateAndDisplayRoute(orig, dest, directionsService, directionsDisplay) {
+	// Uses Google API to find directions and route, and then displays them
 	var totaltime = 0;	
+	var weight2 = 0;
 	directionsService.route({
 		origin: orig, 
 		destination: dest,
@@ -44,6 +48,10 @@ function calculateAndDisplayRoute(orig, dest, directionsService, directionsDispl
 				totaltime = calcTotalTime(response, 0);
 				var fieldNameElement = document.getElementById("googleTime");
 				fieldNameElement.textContent = "Google driving time: " + totaltime;
+				var lnglats = googleWaypointsToArray(response);
+				weight2 = getWeight(lnglats, false);
+				var fieldNameElement = document.getElementById("googleRate");
+				fieldNameElement.textContent = "Total risk: " + weight2;
 			} else {
       		window.alert('Directions request failed due to ' + status);
 			}
@@ -51,16 +59,29 @@ function calculateAndDisplayRoute(orig, dest, directionsService, directionsDispl
 	);
 }
 
+function googleWaypointsToArray(dirResponse){
+// This function takes in a response to Google's directions API and returns a lng, lat array.
+	var points = dirResponse.routes[0].overview_path;
+	var newpoints = [];
+	for (var i = 0; i<points.length; i++){
+		newpoints.push([points[i].lng(), points[i].lat()]);
+	}
+	return newpoints;
+}
+
 
 function directionsWithWaypoints(orig, dest, directionsService, directionsDisplay, waypoints){
-	// This function takes in waypoints I create and gets directions with them.
+	// This function takes in waypoints I create and gets directions with them. This is used to 
+	// calculate transit time.
 	var totaltime=0;	
+	var weight = 0;
 	waypointsConverted = convertToWaypoints(waypoints);
 	directionsService.route({
    	origin: orig, 
    	destination: dest,
    	travelMode: google.maps.TravelMode.DRIVING,
-		waypoints:waypointsConverted
+		waypoints:waypointsConverted,
+		optimizeWaypoints: true
 		}, 
 		function(response, status) {
 			if (status == google.maps.DirectionsStatus.OK) {
@@ -74,9 +95,8 @@ function directionsWithWaypoints(orig, dest, directionsService, directionsDispla
   	);
 }
 
-
-
 function calcTotalTime(response, routenumber){
+	// This sums up the time on a route.
 	var totaltime = 0;
 	route = response.routes[routenumber];
 	for (var i = 0; i < route.legs.length; i++) {
@@ -86,6 +106,7 @@ function calcTotalTime(response, routenumber){
 }
 
 function convertToWaypoints(points){
+	// This converts between a points array and Google's lat/lng.
 	var newpoints = [];
 	var shortpoints = [];
 	for (var i=0; i<points.length; i++) {
@@ -105,6 +126,7 @@ function convertToWaypoints(points){
 
 
 function ShowLoading(showLoading) {
+	// Loading screen, not in use
     if (showLoading) {
         $('#loading').css('visibility', 'visible');
     } else {
@@ -116,8 +138,14 @@ function validDirections(response){
 	console.log("Directions succeeded.")
 }
 
+function validWeights(response){
+	console.log('weights successfully reported.')
+}
+
 
 function getDirections(map){
+	// This does the Google directions elements, then geocodes the start and finish
+	// so that my code can use them. This launches makeandplotpath
 	fromdest = document.getElementById('startPt').value;
 	todest = document.getElementById('endPt').value;
 	calculateAndDisplayRoute(fromdest, todest, directionsService, directionsDisplay);
@@ -126,8 +154,10 @@ function getDirections(map){
 	
 }
 
-
 function makeandplotpath (){
+	// This uses my algorithm to get directions between two previously geocoded points. 
+	var coords = [];
+	var weight = 0;
 	if (add[0]==true && add[1]==true){
 		add[0]=false; 
 		add[1]=false;
@@ -142,11 +172,49 @@ function makeandplotpath (){
 			console.log("Path returned.");
 			latlngs = generateLatLong(data);
 			plotPath(map, latlngs);
-			//directionsWithWaypoints(fromdest, todest, directionsService, directionsDisplay, latlngs);
+			directionsWithWaypoints(fromdest, todest, directionsService, directionsDisplay, latlngs);
+			coords = latlngToArray(latlngs);
+			weight = getWeight(coords, true);
+			var fieldNameElement = document.getElementById("myRate");
+			fieldNameElement.textContent = "Total risk: " + weight;
 		}
 	);
 	}
 }
+
+
+
+function getWeight(coords, onPath){
+	if (onPath==true){
+	$.getJSON("/getWeightOnPath",{
+		wordlist:JSON.stringify(coords)
+		}, function(data){ 
+			console.log("On-path weights returned.");
+			console.log(data.result);
+			weight = data.result;
+			}
+		);
+	} else{
+		$.getJSON("/getWeightOffPath",{
+		wordlist:JSON.stringify(coords)
+		}, function(data){ 
+			console.log("Off-path weights returned.");
+			console.log(data.results);			
+			weight = data.result;
+		}
+		);
+	};
+	return weight;
+}
+
+function latlngToArray(latlng){
+	var arr = [];
+	for (var i = 0; i<latlng.length; i++){
+		arr.push([latlng[i].lng,latlng[i].lat]);
+	}
+	return arr;
+}
+
 
 function geocodePoints(address, locnum) {
 	var returnMe = {};

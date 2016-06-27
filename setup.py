@@ -13,5 +13,5 @@ setup(
     description="This project uses historical traffic data from the state of Massachusetts to provide insight into the safest routes to travel.",
     requires=['numpy', 'pandas', 'matplotlib', 'sklearn', 'psycopg2',
               'flask', 'sqlalchemy', 'networkx', 'scipy', 'shapely',
-              'more_itertools']
+              'more_itertools', 're']
 )

@@ -148,9 +148,11 @@ def findClosestNodeTree(tree, points):
     :param tree: A K-D Tree generated with generateKDTree
     :param points: A list of lng, lat tuples
     :return: closestNodes: A numpy array of lng, lat that corresponds to the
-    shortest path.
+    closest nodes.
     """
+    print(points)
     dist, indices = tree.query(points)
+    print(indices)
     closestNodes = points[indices]
     return closestNodes
 
@@ -222,7 +224,6 @@ def pathWeight(network, path, method="sum", weight='assignedle'):
     the graph. If None, weight is set to "assignedle"
     :return: totalweight: The total weight from the edges.
     """
-
     if weight is None:
         weight = "assignedle"
 
@@ -231,6 +232,8 @@ def pathWeight(network, path, method="sum", weight='assignedle'):
         it = 0
         for node in path:
             it += 1
+            print(node)
+            print(path[it])
             if it < len(path):
                 totalweight += network[node][path[it]][weight]
 
@@ -270,10 +273,10 @@ def getWeight(graph, path, onGraph, method='sum', weight='assignedle'):
     """
 
     if onGraph:
-        return pathWeight(graph, path, method, weight)
+        return pathWeight(graph, list(map(tuple,path)), method, weight)
     else:
         modpath = pathAlign(graph, path)
-        return pathWeight(graph, path, method, weight)
+        return pathWeight(graph, modpath, method, weight)
 
 
 def pathAlign(graph, path):
@@ -294,5 +297,6 @@ def pathAlign(graph, path):
     newPath = t[indices]
     t2 = time.time()-ti
     print("ending path alignment, {}".format(t2))
+    totuple = list(map(tuple, newPath))
 
-    return newPath
+    return list(mtool.unique_everseen(totuple))

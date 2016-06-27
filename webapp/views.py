@@ -9,16 +9,16 @@ from shapely.geometry import LineString
 import numpy as np
 import json
 import networkx as nx
+import re
 from cgi import parse_header
 
-import tempfile
 sys.path.append('/home/louisf/Documents/Insight/massdriver/webapp')
 
 
 # Doing a memory and speed optimization hack.
 #graph = nx.read_gpickle('/home/louisf/Documents/Insight/massdriver/notebooks/graph_with_risk.pickle')
 graph = nx.read_gpickle('/home/louisf/Documents/Insight/massdriver/data/filled_reduced_needs_risk.pickle')
-
+tree = gH.generateKDTree(graph)
 print('Graph loaded successfully')
 
 
@@ -71,3 +71,37 @@ def getdirections():
     rpath = np.reshape(rpath.flatten(), (len(rpath), 2))
     print(rpath)
     return make_response(json.dumps(rpath.tolist()))
+
+@app.route('/getWeightOnPath')
+def getWeightOnPath():
+    wordlist = json.loads(request.args.get('wordlist'))
+    points = parseJsonInput(wordlist)
+    weight = gH.getWeight(graph, points, True)
+
+    print(weight)
+    return jsonify(result=weight)
+    #return make_response(json.dumps('okay'))
+
+
+@app.route('/getWeightOffPath')
+def getWeightOffPath():
+    wordlist = json.loads(request.args.get('wordlist'))
+    points = parseJsonInput(wordlist)
+    print('off-ath points incoming')
+    print(points)
+    weight = gH.getWeight(graph, points, False)
+    return jsonify(result=weight)
+    #return make_response(json.dumps('okay'))
+
+def parseJsonInput(input):
+    """
+    Helper function to go from unformatted JSON string to array.
+    :param input: The raw string output from JSON request.
+    :return: points: A list of (long, lat) tuples
+    """
+    points = []
+    for i in range(0, len(input)):
+        points.append(input[i])
+
+    return points
+
