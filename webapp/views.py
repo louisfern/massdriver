@@ -14,7 +14,7 @@ import tempfile
 sys.path.append('/home/ubuntu/massdriver/webapp')
 
 # Doing a memory and speed optimization hack.
-graph = nx.read_gpickle('/home/ubuntu/filled_reduced.pickle')
+graph = nx.read_gpickle('/home/ubuntu/massdriver/zfr.pickle')
 print('Graph loaded successfully')
 
 @app.route('/')
