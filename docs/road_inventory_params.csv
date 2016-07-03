@@ -21,11 +21,11 @@ fromcity^int64^TRUE^TRUE^FALSE^TRUE^Analysis of in-range values reveals very few
 fromendtyp^int64^TRUE^TRUE^FALSE^FALSE^^1-6^defines the start of the street the segment lies on
 frommeasur^float64^FALSE^TRUE^FALSE^FALSE^^^The measured length along the RoadSegment feature where the RoadInventory segment begins
 fromstate^int64^TRUE^FALSE^FALSE^TRUE^Analysis of in-range values reveals very few in-range values.^1-5^state where the street starts, when at a state boundary
-fromstreet^string^FALSE^FALSE^FALSE^TRUE^^^Cross-street where the street starts, when it does so at a cross-street
+fromstreet^string^FALSE^FALSE^FALSE^TRUE^Incomplete range^^Cross-street where the street starts, when it does so at a cross-street
 functional^int64^TRUE^FALSE^FALSE^FALSE^^0-6^use urban/rural designation to int64erpret functional classification
 futurefaci^int64^FALSE^FALSE^FALSE^TRUE^No definition.^0^unknown definition
 hpmscode^int64^TRUE^FALSE^FALSE^FALSE^^0-2^2 is part of the highway performance monitoring system, else not
-hpmssample^object^FALSE^FALSE^FALSE^TRUE^Station identifier^^identifier of the hpms sample
+hpmssample^string^FALSE^FALSE^FALSE^TRUE^Station identifier^^identifier of the hpms sample
 iri^int64^FALSE^FALSE^FALSE^TRUE^See iristatus^^Pavement roughness
 iristatus^int64^TRUE^FALSE^FALSE^TRUE^Inspection of number of in-range values revealed that this parameter is in-range 2000 times out of 480000. This leaves me with very little confidence that any of these measurements are at all accurate. Removing IRI from my investigations.^1-4^Data collected = 1 else the reason why not
 iriyear^int64^TRUE^FALSE^FALSE^TRUE^See iristatus^^Year of IRI measurement
@@ -65,7 +65,7 @@ routeto^float^FALSE^FALSE^FALSE^FALSE^^^measured length along Route where this r
 routetype^int64^TRUE^FALSE^FALSE^FALSE^^0-2^Non-numbered, numbered and how
 rpa^string^TRUE^TRUE^FALSE^FALSE^^^Regional Planning Agency, can be categorical. TRANSLATE ME
 shape_len^float64^FALSE^FALSE^FALSE^FALSE^^^unknown definition
-speedlimit^int64^FALSE^FALSE^FALSE^FALSE^^5-65^
+speedlimit^int64^FALSE^FALSE^FALSE^TRUE^Even post-imputation I can't fix this.^5-65^
 streetlist^int64^FALSE^TRUE^FALSE^FALSE^^^identifier of the street segment is on
 streetna_1^object^FALSE^FALSE^FALSE^TRUE^^^WILL COMBINE int64O ONE COLUMN WITH STREET NAME
 streetname^object^FALSE^TRUE^FALSE^TRUE^^^

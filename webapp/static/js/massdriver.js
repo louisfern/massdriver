@@ -218,14 +218,25 @@ function latlngToArray(latlng){
 
 function geocodePoints(address, locnum) {
 	var returnMe = {};
-	geocoder.geocode( {'address': address, componentRestrictions:{
-		country: 'USA'}}, function(results, status) {
+	var re = new RegExp(', MA'); // This is to ensure locations are in MA
+	geocoder.geocode( {
+		'address': address, 
+		componentRestrictions:{
+			country: 'USA'
+			}
+		}, 
+		function(results, status) {
       	if (status == google.maps.GeocoderStatus.OK) {
-      		console.log("OK");
+				if (re.exec(results[0].formatted_address) != null ) {     		
+      		console.log("Found location OK.");
 				latlngs[locnum][0]=results[0].geometry.location.lng();
 				latlngs[locnum][1]=results[0].geometry.location.lat();
 				add[locnum] = true;
 				makeandplotpath()
+				} else{
+					console.log("Geocoded response not in MA.");
+					window.alert('Geocoded response not in MA.');	
+				} 
       	} else {
       		console.log("Geocoding unsuccessful.");
      		}

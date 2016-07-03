@@ -163,8 +163,11 @@ class Model():
         self.scores = scores
 
     @staticmethod
-    def rf_regression(x, y, ne, test_size):
-        rf = RandomForestRegressor(n_estimators=ne, oob_score=True)
+    def rf_regression(x, y, ne, test_size, n_cores):
+        rf = RandomForestRegressor(
+            n_estimators=ne,
+            oob_score=True,
+            n_jobs=n_cores)
 
         x_train, x_test, y_train, y_test = train_test_split(
             x, y, test_size=test_size)
@@ -197,7 +200,9 @@ class Model():
         return score, oob_score, rf_pred, x_test, y_test, rf
 
     @staticmethod
-    def rf_regression_crossval(X, y, ne, folds):
-        rf = RandomForestRegressor(n_estimators=ne, oob_score=True)
-        predicted = cross_val_predict(rf, X, y, cv=folds)
-        return predicted
+    def rf_regression_crossval(X, y, ne, folds, n_jobs=4):
+        rf = RandomForestRegressor(n_estimators=ne, oob_score=True,
+                                   n_jobs=n_jobs)
+        predicted = cross_val_predict(rf, X, y, cv=folds, n_jobs=n_jobs)
+        scores = cross_val_score(rf, X, y, cv=folds, n_jobs=n_jobs)
+        return predicted, scores
