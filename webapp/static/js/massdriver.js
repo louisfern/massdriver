@@ -222,7 +222,7 @@ function geocodePoints(address, locnum) {
 	geocoder.geocode( {
 		'address': address, 
 		componentRestrictions:{
-			country: 'USA'
+			country: 'US'
 			}
 		}, 
 		function(results, status) {
